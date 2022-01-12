@@ -1,0 +1,15 @@
+{
+  "name": "client-list-api",
+  "version": "1.0.0",
+  "description": "Serves client resources to frontend vue app",
+  "main": "index.js",
+  "type": "module",
+  "author": "Romeo Nutifafa Folie",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^11.0.0",
+    "express": "^4.17.2",
+    "mongoose": "^6.1.6"
+  }
+}
