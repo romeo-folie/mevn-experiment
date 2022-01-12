@@ -1,11 +1,11 @@
-import express from "express";
+const express = require("express");
 
 const providerRouter = express.Router();
 
 // one to edit client
 // crud for providers
-router.get("/", function (req, res) {
+providerRouter.get("/", function (req, res) {
   // serve list of all providers
 });
 
-export default providerRouter;
+module.exports = providerRouter;

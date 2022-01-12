@@ -1,38 +1,65 @@
-import express from "express";
-import cors from "cors";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import router from "./routes";
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const router = require("./routes");
+const winston = require("winston");
+const path = require("path");
 
-const config = dotenv.config({path: "../.env"});
+const {transports, format, createLogger} = winston;
+const config = dotenv.config({path: path.join(process.cwd(), "/.env")});
 
 if (config.error) throw config.error;
 
-function connectToDB() {
+const logger = createLogger({
+  format: format.json(),
+  defaultMeta: {service: "client-service"},
+  transports: [
+    new transports.File({
+      level: "error",
+      filename: "errors.log",
+    }),
+    new transports.File({
+      level: "info",
+      filename: "combined.log",
+    }),
+  ],
+  exceptionHandlers: [new transports.File({filename: "exceptions.log"})],
+});
+
+if (process.env.NODE_ENV !== "production") {
+  logger.add(
+    new transports.Console({
+      format: format.combine(format.colorize(), format.simple()),
+    })
+  );
+}
+
+async function connectToDB() {
   const uri = process.env.DB_URI;
 
   try {
-    mongoose.connect(uri, {
+    await mongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
   } catch (error) {
-    console.log(`db connection error ${error}`);
+    logger.error(`db connection error ${error}`);
     process.exit(1);
   }
 }
 
-function startServer() {
+async function startServer() {
   const app = express();
   const port = process.env.PORT;
 
-  app.use(cors());
   app.use(express.json());
+  app.use(cors());
   app.use(router);
 
-  connectToDB();
+  await connectToDB();
 
-  app.listen(port, () => console.log(`server up on port ${port}`));
+  app.listen(port, () => logger.info(`server up on port ${port}`));
 }
 
 startServer();
