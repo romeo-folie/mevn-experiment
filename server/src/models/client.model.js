@@ -2,32 +2,35 @@ const {Schema, model} = require("mongoose");
 const {providerSchema} = require("./provider.model");
 
 const clientSchema = new Schema({
-  name: String,
-  email: String,
-  phone: String,
-  providers: [providerSchema],
+  name: {type: String, required: true},
+  email: {type: String, required: true},
+  phone: {type: String, required: true},
+  providers: {
+    type: [{type: Schema.Types.ObjectId, ref: "Provider"}],
+    default: [],
+  },
 });
 
 const clientModel = model("Client", clientSchema);
 
-clientModel.getClients = () => {
-  return clientModel.find({});
+clientModel.getClients = function () {
+  return this.find({});
 };
 
-clientModel.findClient = (id) => {
-  return clientModel.findById(id);
+clientModel.findClient = function (id) {
+  return this.findById(id);
 };
 
-clientModel.addClient = (newClient) => {
-  return clientModel.create({...newClient});
+clientModel.addClient = function (newClient) {
+  return this.create({...newClient});
 };
 
-clientModel.removeClient = (id) => {
-  return clientModel.findByIdAndRemove(id);
+clientModel.removeClient = function (id) {
+  return this.findByIdAndRemove(id);
 };
 
-clientModel.updateClient = (id, updatedClient) => {
-  return clientModel.findByIdAndUpdate(id, updatedClient);
+clientModel.updateClient = function (id, updatedClient) {
+  return this.findByIdAndUpdate(id, updatedClient);
 };
 
 module.exports = {clientModel, clientSchema};

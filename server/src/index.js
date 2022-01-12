@@ -9,7 +9,10 @@ const path = require("path");
 const {transports, format, createLogger} = winston;
 const config = dotenv.config({path: path.join(process.cwd(), "/.env")});
 
-if (config.error) throw config.error;
+if (config.error) {
+  logger.error("dotenv config error ", config.error);
+  throw config.error;
+}
 
 const logger = createLogger({
   format: format.json(),
