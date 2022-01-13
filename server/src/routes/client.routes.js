@@ -36,6 +36,23 @@ const clientRouter = express.Router();
  */
 clientRouter.route("/").get(clientController.all).post(clientController.add);
 
+/**
+ * @openapi
+ * /clients/{id}:
+ *  get:
+ *    description: Get single client
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        type: string
+ *        required: true
+ *        description: ID of client to get
+ *    responses:
+ *      200:
+ *        description: Found client
+ *      404:
+ *        description: Failed to find client
+ */
 clientRouter
   .route("/:id")
   .get(clientController.get)
