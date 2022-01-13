@@ -13,11 +13,11 @@ const clientSchema = new Schema({
 const clientModel = model("Client", clientSchema);
 
 clientModel.getClients = function () {
-  return this.find({});
+  return this.find({}).populate("providers");
 };
 
 clientModel.findClient = function (id) {
-  return this.findById(id);
+  return this.findById(id).populate("providers");
 };
 
 clientModel.addClient = function (newClient) {

@@ -29,7 +29,6 @@ async function connectToDB() {
   }
 }
 
-console.log("spec ", swaggerSpec);
 async function startServer() {
   const app = express();
   const port = process.env.PORT;

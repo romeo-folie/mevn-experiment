@@ -1,9 +1,9 @@
 const {clientModel} = require("../models/client.model");
+const logger = require("../utils/logger");
 
 const clientController = {};
 
 // TODO: Write tests for these endpoints
-// TODO: check out swagger and how to use it for the required result
 clientController.all = async (req, res) => {
   try {
     const clients = await clientModel.getClients();
@@ -27,7 +27,7 @@ clientController.get = async (req, res) => {
 
     res.status(200).json({success: true, data: client});
   } catch (error) {
-    logger.error("error finding client" + error.message);
+    logger.error("error finding client " + error.message);
     res.status(500).json({success: false, message: error.message, data: []});
   }
 };
@@ -38,12 +38,13 @@ clientController.add = async (req, res) => {
       name: req.body.name,
       email: req.body.email,
       phone: req.body.phone,
+      providers: req.body.providers,
     };
 
     newClient = await clientModel.addClient(newClient);
     res.status(201).json({success: true, data: newClient});
   } catch (error) {
-    logger.error("error adding client" + error.message);
+    logger.error("error adding client " + error.message);
     res.status(500).json({success: false, message: error.message});
   }
 };

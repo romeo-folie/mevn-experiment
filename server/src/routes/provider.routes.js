@@ -1,11 +1,17 @@
 const express = require("express");
+const providerController = require("../controllers/provider.controller");
 
 const providerRouter = express.Router();
 
-// one to edit client
-// crud for providers
-providerRouter.get("/", function (req, res) {
-  // serve list of all providers
-});
+providerRouter
+  .route("/")
+  .get(providerController.all)
+  .post(providerController.add);
+
+providerRouter
+  .route("/:id")
+  .get(providerController.get)
+  .put(providerController.update)
+  .delete(providerController.delete);
 
 module.exports = providerRouter;
