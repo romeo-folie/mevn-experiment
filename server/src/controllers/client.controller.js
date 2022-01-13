@@ -2,6 +2,8 @@ const {clientModel} = require("../models/client.model");
 
 const clientController = {};
 
+// TODO: Write tests for these endpoints
+// TODO: check out swagger and how to use it for the required result
 clientController.all = async (req, res) => {
   try {
     const clients = await clientModel.getClients();
@@ -39,7 +41,7 @@ clientController.add = async (req, res) => {
     };
 
     newClient = await clientModel.addClient(newClient);
-    res.status(200).json({success: true, data: newClient});
+    res.status(201).json({success: true, data: newClient});
   } catch (error) {
     logger.error("error adding client" + error.message);
     res.status(500).json({success: false, message: error.message});

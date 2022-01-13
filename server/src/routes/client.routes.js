@@ -3,6 +3,17 @@ const clientController = require("../controllers/client.controller");
 
 const clientRouter = express.Router();
 
+/**
+ * @openapi
+ * /clients:
+ *  get:
+ *    description: Get all clients
+ *    responses:
+ *      200:
+ *        description: success
+ *      500:
+ *        description: failure
+ */
 clientRouter.route("/").get(clientController.all).post(clientController.add);
 
 clientRouter

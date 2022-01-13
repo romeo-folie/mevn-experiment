@@ -1,5 +1,4 @@
 const {Schema, model} = require("mongoose");
-const {providerSchema} = require("./provider.model");
 
 const clientSchema = new Schema({
   name: {type: String, required: true},

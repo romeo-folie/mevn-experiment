@@ -3,39 +3,16 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const router = require("./routes");
-const winston = require("winston");
 const path = require("path");
+const swaggerUI = require("swagger-ui-express");
+const swaggerSpec = require("./utils/swagger");
+const logger = require("./utils/logger");
 
-const {transports, format, createLogger} = winston;
 const config = dotenv.config({path: path.join(process.cwd(), "/.env")});
 
 if (config.error) {
   logger.error("dotenv config error ", config.error);
   throw config.error;
-}
-
-const logger = createLogger({
-  format: format.json(),
-  defaultMeta: {service: "client-service"},
-  transports: [
-    new transports.File({
-      level: "error",
-      filename: "errors.log",
-    }),
-    new transports.File({
-      level: "info",
-      filename: "combined.log",
-    }),
-  ],
-  exceptionHandlers: [new transports.File({filename: "exceptions.log"})],
-});
-
-if (process.env.NODE_ENV !== "production") {
-  logger.add(
-    new transports.Console({
-      format: format.combine(format.colorize(), format.simple()),
-    })
-  );
 }
 
 async function connectToDB() {
@@ -52,6 +29,7 @@ async function connectToDB() {
   }
 }
 
+console.log("spec ", swaggerSpec);
 async function startServer() {
   const app = express();
   const port = process.env.PORT;
@@ -59,6 +37,7 @@ async function startServer() {
   app.use(express.json());
   app.use(cors());
   app.use(router);
+  app.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
   await connectToDB();
 
