@@ -15,11 +15,11 @@ if (config.error) {
   throw config.error;
 }
 
-async function connectToDB() {
+function connectToDB() {
   const uri = process.env.DB_URI;
 
   try {
-    await mongoose.connect(uri, {
+    mongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -29,18 +29,17 @@ async function connectToDB() {
   }
 }
 
-async function startServer() {
-  const app = express();
-  const port = process.env.PORT;
+const app = express();
+const port = process.env.PORT;
 
-  app.use(express.json());
-  app.use(cors());
-  app.use(router);
-  app.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+app.use(express.json());
+app.use(cors());
+app.use(router);
+app.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
-  await connectToDB();
-
+if (process.env.NODE_ENV !== "test") {
+  connectToDB();
   app.listen(port, () => logger.info(`server up on port ${port}`));
 }
 
-startServer();
+module.exports = app;

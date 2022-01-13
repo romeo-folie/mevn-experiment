@@ -10,7 +10,7 @@ clientController.all = async (req, res) => {
     res.status(200).json({success: true, data: clients});
   } catch (error) {
     logger.error("error fetching clients " + error.message);
-    res.status(500).json({success: false, message: error.message, data: []});
+    res.status(500).json({success: false, message: error.message});
   }
 };
 
@@ -18,17 +18,10 @@ clientController.get = async (req, res) => {
   try {
     const {id} = req.params;
     const client = await clientModel.findClient(id);
-    // write a test case to assert that the right response is sent
-    // when the client is not found
-    if (!client) {
-      res.status(404).json({success: false, message: error.message, data: []});
-      return;
-    }
-
     res.status(200).json({success: true, data: client});
   } catch (error) {
     logger.error("error finding client " + error.message);
-    res.status(500).json({success: false, message: error.message, data: []});
+    res.status(404).json({success: false, message: error.message});
   }
 };
 

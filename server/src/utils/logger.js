@@ -18,7 +18,7 @@ const logger = createLogger({
   exceptionHandlers: [new transports.File({filename: "exceptions.log"})],
 });
 
-if (process.env.NODE_ENV !== "production") {
+if (!["production", "test"].includes(process.env.NODE_ENV)) {
   logger.add(
     new transports.Console({
       format: format.combine(format.colorize(), format.simple()),

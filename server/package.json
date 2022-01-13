@@ -2,13 +2,13 @@
   "name": "client-list-api",
   "version": "1.0.0",
   "description": "Serves client resources to frontend vue app",
-  "main": "index.js",
+  "main": "server.js",
   "author": "Romeo Nutifafa Folie",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon src/index.js",
-    "start": "node src/index.js",
-    "test": "jest"
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "test": "jest --watch --verbose --runInBand"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -21,6 +21,8 @@
   },
   "devDependencies": {
     "jest": "^27.4.7",
-    "nodemon": "^2.0.15"
+    "mongodb-memory-server": "^8.1.0",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.1"
   }
 }

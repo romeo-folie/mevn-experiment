@@ -9,7 +9,7 @@ providerController.all = async (req, res) => {
     res.status(200).json({success: true, data: providers});
   } catch (error) {
     logger.error("error fetching providers " + error.message);
-    res.status(500).json({success: false, message: error.message, data: []});
+    res.status(500).json({success: false, message: error.message});
   }
 };
 
@@ -17,16 +17,10 @@ providerController.get = async (req, res) => {
   try {
     const {id} = req.params;
     const provider = await providerModel.findProvider(id);
-
-    if (!provider) {
-      res.status(404).json({success: false, message: error.message, data: []});
-      return;
-    }
-
     res.status(200).json({success: true, data: provider});
   } catch (error) {
     logger.error("error finding provider " + error.message);
-    res.status(500).json({success: false, message: error.message, data: []});
+    res.status(404).json({success: false, message: error.message});
   }
 };
 
@@ -41,7 +35,7 @@ providerController.add = async (req, res) => {
   }
 };
 
-providerController.update = async (req, res) => {}
-providerController.delete = async (req, res) => {}
+providerController.update = async (req, res) => {};
+providerController.delete = async (req, res) => {};
 
 module.exports = providerController;
