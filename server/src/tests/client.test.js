@@ -54,5 +54,19 @@ describe("client entity tests", () => {
       expect.objectContaining(client);
       expect(res.body.data.name).toEqual(client.name);
     });
+
+    it("should fail to add a client if required parameters are not provided", async () => {
+      const client = {
+        name: "",
+        email: "",
+        phone: "",
+      };
+
+      const res = await agent.post("/clients").send(client);
+
+      expect(res.statusCode).toEqual(500);
+      expect(res.body.success).toEqual(false);
+      expect(res.body.data).toBeUndefined();
+    });
   });
 });
