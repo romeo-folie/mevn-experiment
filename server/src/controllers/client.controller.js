@@ -3,7 +3,6 @@ const logger = require("../utils/logger");
 
 const clientController = {};
 
-// TODO: Write tests for these endpoints
 clientController.all = async (req, res) => {
   try {
     const clients = await clientModel.getClients();
@@ -75,6 +74,23 @@ clientController.update = async (req, res) => {
   }
 };
 
-clientController.delete = (req, res) => {};
+clientController.delete = async (req, res) => {
+  try {
+    const {id} = req.params;
+    const existingClient = await clientModel.findClient(id);
+
+    if (!existingClient) {
+      logger.error(`failed to find client with id of ${id}`);
+      res.status(404).json({success: false, message: "client not found"});
+      return;
+    }
+
+    let deletedClient = await clientModel.removeClient(id);
+    res.status(200).json({success: true, data: deletedClient});
+  } catch (error) {
+    logger.error("error deleting client " + error.message);
+    res.status(500).json({success: false, message: error.message});
+  }
+};
 
 module.exports = clientController;

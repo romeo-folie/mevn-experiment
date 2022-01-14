@@ -41,6 +41,27 @@ describe("client entity tests", () => {
     });
   });
 
+  describe("POST /clients", () => {
+    it("should add a new client", async () => {
+      const res = await agent.post("/clients").send(client);
+
+      expect(res.statusCode).toEqual(201);
+      expect(res.body).toHaveProperty("data");
+      expect(typeof res.body.data === "object").toBe(true);
+      expect.objectContaining(client);
+      expect(res.body.data.name).toEqual(client.name);
+    });
+
+    it("should fail to add a client if required parameters are not provided", async () => {
+      const res = await agent.post("/clients").send(emptyClient);
+
+      expect(res.statusCode).toEqual(500);
+      expect(res.body.success).toEqual(false);
+      expect(res.body.data).toBeUndefined();
+      expect(res.body.message).toBeDefined();
+    });
+  });
+
   describe("GET /clients/:id", () => {
     it("should return a 500 for improperly formed client id", async () => {
       const id = "61dffb68217c76966a";
@@ -70,27 +91,6 @@ describe("client entity tests", () => {
       expect(res.body).toHaveProperty("data");
       expect(typeof res.body.data === "object").toBe(true);
       expect(res.body.data.name).toEqual(newClient.name);
-    });
-  });
-
-  describe("POST /clients", () => {
-    it("should add a new client", async () => {
-      const res = await agent.post("/clients").send(client);
-
-      expect(res.statusCode).toEqual(201);
-      expect(res.body).toHaveProperty("data");
-      expect(typeof res.body.data === "object").toBe(true);
-      expect.objectContaining(client);
-      expect(res.body.data.name).toEqual(client.name);
-    });
-
-    it("should fail to add a client if required parameters are not provided", async () => {
-      const res = await agent.post("/clients").send(emptyClient);
-
-      expect(res.statusCode).toEqual(500);
-      expect(res.body.success).toEqual(false);
-      expect(res.body.data).toBeUndefined();
-      expect(res.body.message).toBeDefined();
     });
   });
 
@@ -141,7 +141,7 @@ describe("client entity tests", () => {
 
       expect(createdClient.name).toEqual(client.name);
       expect(res.statusCode).toBe(200);
-      expect(foundClient).not.toHaveProperty("name");
+      expect(foundClient).toBeNull();
     });
   });
 });
