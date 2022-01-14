@@ -29,15 +29,16 @@ const emptyClient = {
 };
 
 describe("client entity tests", () => {
-  // TODO: Rewrite and add a few documents to test against
   describe("GET /clients", () => {
     it("should get an array of clients", async () => {
+      await clientModel.addClient(client);
       const res = await agent.get("/clients");
 
       expect(res.statusCode).toEqual(200);
       expect(res.body.success).toEqual(true);
       expect(res.body).toHaveProperty("data");
       expect(Array.isArray(res.body.data)).toBe(true);
+      expect(res.body.data).toHaveLength(1);
     });
   });
 
@@ -133,13 +134,13 @@ describe("client entity tests", () => {
 
     it("should delete and return deleted client", async () => {
       let newClient = await clientModel.addClient(client);
-      let createdClient = await clientModel.findClient(newClient._id);
+      newClient = await clientModel.findClient(newClient._id);
 
       const res = await agent.delete(`/clients/${newClient._id}`);
 
-      let foundClient = await clientModel.findClient(res.body.data._id);
+      const foundClient = await clientModel.findClient(res.body.data._id);
 
-      expect(createdClient.name).toEqual(client.name);
+      expect(newClient.name).toEqual(client.name);
       expect(res.statusCode).toBe(200);
       expect(foundClient).toBeNull();
     });
