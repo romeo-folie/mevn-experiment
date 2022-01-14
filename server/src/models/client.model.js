@@ -29,7 +29,7 @@ clientModel.removeClient = function (id) {
 };
 
 clientModel.updateClient = function (id, updatedClient) {
-  return this.findByIdAndUpdate(id, updatedClient);
+  return this.findByIdAndUpdate(id, updatedClient, {new: true});
 };
 
 module.exports = {clientModel, clientSchema};
