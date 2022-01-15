@@ -137,11 +137,11 @@ describe("client entity tests", () => {
       newClient = await clientModel.findClient(newClient._id);
 
       const res = await agent.delete(`/clients/${newClient._id}`);
-
       const foundClient = await clientModel.findClient(res.body.data._id);
 
       expect(newClient.name).toEqual(client.name);
       expect(res.statusCode).toBe(200);
+      expect(res.body.data.name).toEqual(newClient.name);
       expect(foundClient).toBeNull();
     });
   });

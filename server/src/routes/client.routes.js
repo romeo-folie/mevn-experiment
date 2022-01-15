@@ -52,6 +52,50 @@ clientRouter.route("/").get(clientController.all).post(clientController.add);
  *        description: Found client
  *      404:
  *        description: Failed to find client
+ *      500:
+ *        description: Error finding client
+ *  put:
+ *    description: Update single client
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        type: string
+ *        required: true
+ *        description: ID of client to update
+ *      - name: name
+ *        description: updated name of client
+ *        type: string
+ *        required: true
+ *      - name: email
+ *        description: Email of client
+ *        type: string
+ *        required: true
+ *      - name: phone
+ *        description: Phone number of client
+ *        type: string
+ *        required: true
+ *    responses:
+ *      200:
+ *        description: Updated client
+ *      404:
+ *        description: Failed to find client to update
+ *      500:
+ *        description: Error updating client
+ *  delete:
+ *    description: Delete single client
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        type: string
+ *        required: true
+ *        description: ID of client to delete
+ *    responses:
+ *      200:
+ *        description: Deleted client
+ *      404:
+ *        description: Failed to find client to delete
+ *      500:
+ *        description: Error deleting client
  */
 clientRouter
   .route("/:id")
