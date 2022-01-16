@@ -1,7 +1,6 @@
 const request = require("supertest");
 const server = require("../server");
 const db = require("./db");
-const mongoose = require("mongoose");
 const {clientModel} = require("../models/client.model");
 
 const agent = request.agent(server);
@@ -36,7 +35,7 @@ describe("client entity tests", () => {
 
       expect(res.statusCode).toEqual(200);
       expect(res.body.success).toEqual(true);
-      expect(res.body).toHaveProperty("data");
+      expect(res.body.data).toBeDefined();
       expect(Array.isArray(res.body.data)).toBe(true);
       expect(res.body.data).toHaveLength(1);
     });
@@ -47,7 +46,7 @@ describe("client entity tests", () => {
       const res = await agent.post("/clients").send(client);
 
       expect(res.statusCode).toEqual(201);
-      expect(res.body).toHaveProperty("data");
+      expect(res.body.data).toBeDefined();
       expect(typeof res.body.data === "object").toBe(true);
       expect.objectContaining(client);
       expect(res.body.data.name).toEqual(client.name);
@@ -103,7 +102,7 @@ describe("client entity tests", () => {
 
       expect(res.statusCode).toEqual(404);
       expect(res.body.success).toEqual(false);
-      expect(res.body).toHaveProperty("message");
+      expect(res.body.message).toBeDefined();
     });
 
     it("should update and return updated client", async () => {
@@ -129,7 +128,7 @@ describe("client entity tests", () => {
 
       expect(res.statusCode).toEqual(404);
       expect(res.body.success).toEqual(false);
-      expect(res.body).toHaveProperty("message");
+      expect(res.body.message).toBeDefined();
     });
 
     it("should delete and return deleted client", async () => {

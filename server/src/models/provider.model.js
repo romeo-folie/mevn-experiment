@@ -1,7 +1,7 @@
 const {Schema, model} = require("mongoose");
 
 const providerSchema = new Schema({
-  name: String,
+  name: {type: String, required: true},
 });
 
 const providerModel = model("Provider", providerSchema);
@@ -15,7 +15,7 @@ providerModel.findProvider = function (id) {
 };
 
 providerModel.addProvider = function (newProvider) {
-  return this.create({...newProvider});
+  return this.create(newProvider);
 };
 
 providerModel.removeProvider = function (id) {
@@ -23,7 +23,7 @@ providerModel.removeProvider = function (id) {
 };
 
 providerModel.updateProvider = function (id, updatedProvider) {
-  return this.findByIdAndUpdate(id, updatedProvider);
+  return this.findByIdAndUpdate(id, updatedProvider, {new: true});
 };
 
 module.exports = {providerModel, providerSchema};

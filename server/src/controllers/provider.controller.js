@@ -76,7 +76,7 @@ providerController.delete = async (req, res) => {
       return;
     }
 
-    let deletedprovider = await providerModel.removeprovider(id);
+    let deletedprovider = await providerModel.removeProvider(id);
     res.status(200).json({success: true, data: deletedprovider});
   } catch (error) {
     logger.error("error deleting provider " + error.message);

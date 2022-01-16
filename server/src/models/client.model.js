@@ -21,7 +21,7 @@ clientModel.findClient = function (id) {
 };
 
 clientModel.addClient = function (newClient) {
-  return this.create({...newClient});
+  return this.create(newClient);
 };
 
 clientModel.removeClient = function (id) {
