@@ -10,9 +10,11 @@ const clientRouter = express.Router();
  *    description: Get all clients
  *    responses:
  *      200:
- *        description: Returns all clients
+ *        description: Returned all clients
  *      500:
  *        description: Failed to return clients
+ *    tags:
+ *      - clients
  *  post:
  *    description: Add new client
  *    parameters:
@@ -33,6 +35,8 @@ const clientRouter = express.Router();
  *        description: Added new client
  *      500:
  *         description: Failed to add new client
+ *    tags:
+ *      - clients
  */
 clientRouter.route("/").get(clientController.all).post(clientController.add);
 
@@ -51,9 +55,11 @@ clientRouter.route("/").get(clientController.all).post(clientController.add);
  *      200:
  *        description: Found client
  *      404:
- *        description: Failed to find client
+ *        description: Client not found
  *      500:
  *        description: Error finding client
+ *    tags:
+ *      - clients
  *  put:
  *    description: Update single client
  *    parameters:
@@ -81,6 +87,8 @@ clientRouter.route("/").get(clientController.all).post(clientController.add);
  *        description: Failed to find client to update
  *      500:
  *        description: Error updating client
+ *    tags:
+ *      - clients
  *  delete:
  *    description: Delete single client
  *    parameters:
@@ -96,6 +104,8 @@ clientRouter.route("/").get(clientController.all).post(clientController.add);
  *        description: Failed to find client to delete
  *      500:
  *        description: Error deleting client
+ *    tags:
+ *      - clients
  */
 clientRouter
   .route("/:id")
