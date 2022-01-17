@@ -11,13 +11,10 @@ import ClientList from "./components/ClientList";
 
 export default {
   name: "App",
-
   components: {
     ClientList,
   },
-
-  data: () => ({
-    //
-  }),
+  // perform call to get clients and related providers
+  // pass them to the clientlist component
 };
 </script>
