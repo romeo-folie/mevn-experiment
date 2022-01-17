@@ -27,26 +27,155 @@
             <v-divider></v-divider>
 
             <v-card-text>
-              <v-container class="d-flex flex-column">
+              <v-container class="form-wrap">
                 <div class="form-group">
-                  <span class="label">Name:</span>
-                  <input type="text" />
+                  <v-row>
+                    <v-col cols="2" class="d-flex justify-end align-center">
+                      <span class="label">Name:</span>
+                    </v-col>
+                    <v-col cols="10">
+                      <input type="text" />
+                    </v-col>
+                  </v-row>
                 </div>
 
                 <div class="form-group">
-                  <span class="label">Email:</span>
-                  <input type="text" />
+                  <v-row>
+                    <v-col cols="2" class="d-flex justify-end align-center">
+                      <span class="label">Email:</span>
+                    </v-col>
+                    <v-col cols="10">
+                      <input type="text" />
+                    </v-col>
+                  </v-row>
                 </div>
 
                 <div class="form-group">
-                  <span class="label">Phone:</span>
-                  <input type="text" />
+                  <v-row>
+                    <v-col cols="2" class="d-flex justify-end align-center">
+                      <span class="label">Phone:</span>
+                    </v-col>
+                    <v-col cols="10">
+                      <input type="text" />
+                    </v-col>
+                  </v-row>
                 </div>
 
                 <div class="form-group">
-                  <span class="label">Provider:</span>
-                  <input type="text" />
-                  <v-btn elevation="1" small>Add Provider</v-btn>
+                  <v-row>
+                    <v-col cols="2" class="d-flex justify-end align-center">
+                      <span class="label">Provider:</span>
+                    </v-col>
+                    <v-col cols="10">
+                      <v-row>
+                        <v-col cols="8">
+                          <input type="text" />
+                        </v-col>
+                        <v-col cols="4">
+                          <v-btn elevation="1" width="100%">Add Provider</v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                </div>
+
+                <!-- List of providers -->
+                <div class="form-group">
+                  <v-row>
+                    <v-col cols="2"></v-col>
+                    <v-col cols="10">
+                      <v-row>
+                        <v-col cols="8">
+                          <div class="provider-list">
+                            <v-row no-gutters align="center">
+                              <v-col cols="8">
+                                <v-checkbox
+                                  v-model="checkbox"
+                                  label="Provider 1"
+                                  dense
+                                  hide-details
+                                  color="black"
+                                ></v-checkbox>
+                              </v-col>
+
+                              <v-col
+                                cols="2"
+                                class="d-flex justify-center align-center"
+                              >
+                                <v-icon dense
+                                  >mdi-pencil-box-multiple-outline</v-icon
+                                >
+                              </v-col>
+
+                              <v-col
+                                cols="2"
+                                class="d-flex justify-center align-center"
+                              >
+                                <v-icon dense>mdi-delete</v-icon>
+                              </v-col>
+                            </v-row>
+
+                            <v-row no-gutters align="center">
+                              <v-col cols="8">
+                                <v-checkbox
+                                  v-model="checkbox"
+                                  label="Provider 1"
+                                  dense
+                                  hide-details
+                                  color="black"
+                                ></v-checkbox>
+                              </v-col>
+
+                              <v-col
+                                cols="2"
+                                class="d-flex justify-center align-center"
+                              >
+                                <v-icon dense
+                                  >mdi-pencil-box-multiple-outline</v-icon
+                                >
+                              </v-col>
+
+                              <v-col
+                                cols="2"
+                                class="d-flex justify-center align-center"
+                              >
+                                <v-icon dense>mdi-delete</v-icon>
+                              </v-col>
+                            </v-row>
+
+                            <v-row no-gutters align="center">
+                              <v-col cols="8">
+                                <v-checkbox
+                                  v-model="checkbox"
+                                  label="Provider 1"
+                                  dense
+                                  hide-details
+                                  color="black"
+                                ></v-checkbox>
+                              </v-col>
+
+                              <v-col
+                                cols="2"
+                                class="d-flex justify-center align-center"
+                              >
+                                <v-icon dense
+                                  >mdi-pencil-box-multiple-outline</v-icon
+                                >
+                              </v-col>
+
+                              <v-col
+                                cols="2"
+                                class="d-flex justify-center align-center"
+                              >
+                                <v-icon dense>mdi-delete</v-icon>
+                              </v-col>
+                            </v-row>
+                          </div>
+                        </v-col>
+                        <v-col cols="4"></v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
                 </div>
               </v-container>
             </v-card-text>
@@ -91,6 +220,7 @@ export default {
       newDialog: false,
       editDialog: false,
       deleteDialog: false,
+      checkbox: false,
       editedItem: {
         name: "",
         email: "",
@@ -164,25 +294,45 @@ export default {
 }
 
 .form-group {
+  width: inherit;
+}
+
+.form-group:not(:last-of-type) {
+  margin-bottom: 30px;
+}
+
+.form-wrap {
   display: flex;
-  /* justify-content: flex-start; */
-  /* align-items: center; */
-  margin-bottom: 20px;
+  flex-direction: column;
+  align-items: center;
+  max-width: 80%;
+  padding: 20px 0;
 }
 
 .label {
-  margin-right: 8px;
   color: black;
   font-weight: bold;
 }
 
 .form-group input {
   border: 0.5px solid black;
-  width: 55%;
-  padding: 5px;
+  padding: 6px;
+  width: 100%;
 }
 
 .form-group input:focus {
   outline: none;
+}
+
+button {
+  text-transform: capitalize !important;
+}
+
+.provider-list {
+  border: 0.5px solid black;
+  border-radius: 4px;
+  padding: 10px 15px;
+  display: flex;
+  flex-direction: column;
 }
 </style>
