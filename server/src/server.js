@@ -15,8 +15,6 @@ if (process.env.NODE_ENV !== "production") {
     logger.error("dotenv config error ", config.error);
     throw config.error;
   }
-} else {
-  dotenv.config();
 }
 
 function connectToDB() {
