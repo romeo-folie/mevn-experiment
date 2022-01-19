@@ -8,11 +8,15 @@ const swaggerUI = require("swagger-ui-express");
 const swaggerSpec = require("./utils/swagger");
 const logger = require("./utils/logger");
 
-const config = dotenv.config({path: path.join(process.cwd(), "/.env")});
+if (process.env.NODE_ENV !== "production") {
+  const config = dotenv.config({path: path.join(process.cwd(), "/.env")});
 
-if (config.error) {
-  logger.error("dotenv config error ", config.error);
-  throw config.error;
+  if (config.error) {
+    logger.error("dotenv config error ", config.error);
+    throw config.error;
+  }
+} else {
+  dotenv.config();
 }
 
 function connectToDB() {
@@ -30,7 +34,7 @@ function connectToDB() {
 }
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cors());
