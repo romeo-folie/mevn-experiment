@@ -18,7 +18,7 @@ export default {
   data() {
     return {
       clients: [],
-      providers: []
+      providers: [],
     };
   },
   mounted() {
@@ -26,12 +26,9 @@ export default {
   },
   methods: {
     async fetchClients() {
-      //TODO: setup endpoint that returns both clients and providers
-      // this is so I don't have to make two requests here 
-      const clientRes = await api.get("/clients");
-      const proRes = await api.get("/providers");
-      this.clients = clientRes.data.data;
-      this.providers = proRes.data.data;
+      const res = await api.get("/all");
+      this.clients = res.data.data.clients;
+      this.providers = res.data.data.providers;
     },
   },
 };
