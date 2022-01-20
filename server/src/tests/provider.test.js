@@ -118,7 +118,7 @@ describe("provider tests", () => {
     it("should delete and return deleted provider", async () => {
       let newProvider = await providerModel.addProvider(provider);
       newProvider = await providerModel.findProvider(newProvider._id);
-      
+
       const res = await agent.delete(`/providers/${newProvider._id}`);
       const foundProvider = await providerModel.findProvider(res.body.data._id);
 
@@ -129,3 +129,5 @@ describe("provider tests", () => {
     });
   });
 });
+
+module.exports = {provider};

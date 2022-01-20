@@ -2,6 +2,8 @@ const request = require("supertest");
 const server = require("../server");
 const db = require("./db");
 const {clientModel} = require("../models/client.model");
+const {providerModel} = require("../models/provider.model");
+const {provider} = require("./provider.test");
 
 const agent = request.agent(server);
 
@@ -143,5 +145,26 @@ describe("client entity tests", () => {
       expect(res.body.data.name).toEqual(newClient.name);
       expect(foundClient).toBeNull();
     });
+  });
+});
+
+describe("resource route test", () => {
+  it("should return all clients and providers", async () => {
+    const newProvider = await providerModel.addProvider(provider);
+
+    const newClient = await clientModel.addClient({
+      ...client,
+      providers: [newProvider._id],
+    });
+
+    const res = await agent.get("/all");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.data).toHaveProperty("clients");
+    expect(res.body.data).toHaveProperty("providers");
+    expect(res.body.data.clients).toHaveLength(1);
+    expect(res.body.data.providers).toHaveLength(1);
+    expect(Array.isArray(res.body.data.clients)).toBe(true);
+    expect(Array.isArray(res.body.data.providers)).toBe(true);
   });
 });
