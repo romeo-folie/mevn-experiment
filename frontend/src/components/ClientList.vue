@@ -198,6 +198,9 @@
         :search="search"
         :items-per-page="10"
       >
+        <template v-slot:item.providers="{item}">
+          <td>{{ listProviders(item.providers) }}</td>
+        </template>
         <template v-slot:item.actions="{item}">
           <v-dialog v-model="editDialog" max-width="50%">
             <template v-slot:activator="{on, attrs}">
@@ -427,7 +430,7 @@
 <script>
 export default {
   name: "ClientList",
-  // props: ["clients"],
+  props: ["clients"],
   data() {
     return {
       search: "",
@@ -455,35 +458,13 @@ export default {
         },
         {text: "Email", value: "email"},
         {text: "Phone", value: "phone"},
-        {text: "Providers", value: "providers"},
+        {
+          text: "Providers",
+          value: "providers",
+          sortable: false,
+          filterable: true,
+        },
         {text: "Actions", value: "actions", sortable: false},
-      ],
-      clients: [
-        {
-          name: "Romeo Folie",
-          email: "romeo@mail.com",
-          phone: "0543345432",
-        },
-        {
-          name: "Tsatsu Tsikata",
-          email: "tsikata@mail.com",
-          phone: "0543345432",
-        },
-        {
-          name: "Zino leesky",
-          email: "zino@mail.com",
-          phone: "0543345432",
-        },
-        {
-          name: "Abena Wahab",
-          email: "awahab@mail.com",
-          phone: "0543345432",
-        },
-        {
-          name: "Justice Gram",
-          email: "jgram@mail.com",
-          phone: "0543345432",
-        },
       ],
     };
   },
@@ -505,6 +486,9 @@ export default {
       this.deleteDialog = false;
     },
     save() {},
+    listProviders(pros) {
+      return pros.map((pro) => pro.name).join(", ");
+    },
   },
 };
 </script>
