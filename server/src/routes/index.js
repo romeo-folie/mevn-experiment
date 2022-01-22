@@ -10,6 +10,7 @@ const router = express.Router();
 router.use("/clients", clientRouter);
 router.use("/providers", providerRouter);
 
+// TODO: Document in swagger
 router.get("/all", async (req, res) => {
   try {
     const clients = await clientModel.getClients();

@@ -15,7 +15,7 @@
           ></v-text-field>
         </v-col>
         <v-spacer></v-spacer>
-        <v-dialog v-model="newDialog" max-width="50%">
+        <v-dialog v-model="newClientDialog" max-width="50%">
           <template v-slot:activator="{on, attrs}">
             <v-btn elevation="2" v-bind="attrs" v-on="on">New Client</v-btn>
           </template>
@@ -134,7 +134,7 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn @click="closeNewDialog" elevation="1" class="mr-4">
+              <v-btn @click="closeNewClientDialog" elevation="1" class="mr-4">
                 Cancel
               </v-btn>
               <v-btn elevation="1"> Add client </v-btn>
@@ -152,11 +152,15 @@
           <td>{{ listProviders(item.providers) }}</td>
         </template>
         <template v-slot:item.actions="{item}">
-          <v-dialog v-model="editDialog" max-width="50%">
+          <v-dialog
+            v-model="editClientDialog"
+            max-width="50%"
+            :retain-focus="false"
+          >
             <template v-slot:activator="{on, attrs}">
               <v-btn
                 elevation="2"
-                @click="editItem(item)"
+                @click="editClient(item)"
                 class="mr-4"
                 x-small
                 v-bind="attrs"
@@ -179,7 +183,7 @@
                         <span class="label">Name:</span>
                       </v-col>
                       <v-col cols="10">
-                        <input type="text" v-model="editedItem.name" />
+                        <input type="text" v-model="editedClient.name" />
                       </v-col>
                     </v-row>
                   </div>
@@ -190,7 +194,7 @@
                         <span class="label">Email:</span>
                       </v-col>
                       <v-col cols="10">
-                        <input type="text" v-model="editedItem.email" />
+                        <input type="text" v-model="editedClient.email" />
                       </v-col>
                     </v-row>
                   </div>
@@ -201,7 +205,7 @@
                         <span class="label">Phone:</span>
                       </v-col>
                       <v-col cols="10">
-                        <input type="text" v-model="editedItem.phone" />
+                        <input type="text" v-model="editedClient.phone" />
                       </v-col>
                     </v-row>
                   </div>
@@ -241,12 +245,12 @@
                                 no-gutters
                                 align="center"
                                 v-for="pro in providers"
-                                :key="pro.id"
+                                :key="pro._id"
                               >
                                 <v-col cols="8">
                                   <v-checkbox
                                     :label="pro.name"
-                                    :input-value="associatedProvider(pro)"
+                                    :input-value="checkRelation(pro)"
                                     @change="editCheckboxChange($event, pro)"
                                     dense
                                     hide-details
@@ -258,16 +262,91 @@
                                   cols="2"
                                   class="d-flex justify-center align-center"
                                 >
-                                  <v-icon dense color="black"
-                                    >mdi-pencil-box-multiple-outline</v-icon
+                                  <v-dialog
+                                    v-model="editProviderDialog"
+                                    max-width="40%"
+                                    persistent
+                                    :retain-focus="false"
                                   >
+                                    <template v-slot:activator="{on, attrs}">
+                                      <v-icon
+                                        dense
+                                        color="black"
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        @click="editProvider(pro)"
+                                        >mdi-pencil-box-multiple-outline</v-icon
+                                      >
+                                    </template>
+                                    <v-card>
+                                      <v-card-title>
+                                        <v-row
+                                          justify="space-between"
+                                          class="py-2"
+                                        >
+                                          <h3 class="modal-title">
+                                            Edit Provider
+                                          </h3>
+                                          <v-icon
+                                            dense
+                                            @click="closeEditProviderDialog"
+                                          >
+                                            mdi-close-circle
+                                          </v-icon>
+                                        </v-row>
+                                      </v-card-title>
+
+                                      <v-divider></v-divider>
+
+                                      <v-card-text>
+                                        <v-container class="form-wrap">
+                                          <div class="form-group">
+                                            <v-row>
+                                              <v-col
+                                                cols="2"
+                                                class="d-flex justify-end align-center"
+                                              >
+                                                <span class="label"
+                                                  >Provider:</span
+                                                >
+                                              </v-col>
+                                              <v-col cols="10">
+                                                <v-row>
+                                                  <v-col cols="8">
+                                                    <input
+                                                      type="text"
+                                                      v-model="
+                                                        editedProvider.name
+                                                      "
+                                                    />
+                                                  </v-col>
+                                                  <v-col cols="4">
+                                                    <v-btn
+                                                      elevation="1"
+                                                      @click="
+                                                        updateProvider(pro._id)
+                                                      "
+                                                      >Update Provider</v-btn
+                                                    >
+                                                  </v-col>
+                                                </v-row>
+                                              </v-col>
+                                            </v-row>
+                                          </div>
+                                        </v-container>
+                                      </v-card-text>
+                                    </v-card>
+                                  </v-dialog>
                                 </v-col>
 
                                 <v-col
                                   cols="2"
                                   class="d-flex justify-center align-center"
                                 >
-                                  <v-icon dense color="black"
+                                  <v-icon
+                                    @click="deleteProvider(pro._id)"
+                                    dense
+                                    color="black"
                                     >mdi-delete</v-icon
                                   >
                                 </v-col>
@@ -287,14 +366,18 @@
               <v-card-actions>
                 <v-btn color="red" dark elevation="1"> Delete client </v-btn>
                 <v-spacer></v-spacer>
-                <v-btn @click="closeEditDialog" elevation="1" class="mr-4">
+                <v-btn
+                  @click="closeClientEditDialog"
+                  elevation="1"
+                  class="mr-4"
+                >
                   Cancel
                 </v-btn>
                 <v-btn elevation="1"> Update client </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <v-dialog v-model="deleteDialog" max-width="500px">
+          <v-dialog v-model="deleteClientDialog" max-width="500px">
             <template v-slot:activator="{on, attrs}">
               <v-btn
                 elevation="1"
@@ -312,7 +395,10 @@
               >
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="closeDeleteDialog"
+                <v-btn
+                  color="blue darken-1"
+                  text
+                  @click="closeClientDeleteDialog"
                   >Cancel</v-btn
                 >
                 <v-btn color="blue darken-1" text>OK</v-btn>
@@ -336,17 +422,21 @@ export default {
     return {
       search: "",
       newProvider: {name: ""},
-      newDialog: false,
-      editDialog: false,
-      deleteDialog: false,
-      selectedProviders: [],
-      editedItem: {
+      newClient: {
         name: "",
         email: "",
         phone: "",
         providers: [],
       },
-      defaultItem: {
+      newClientDialog: false,
+      editClientDialog: false,
+      deleteClientDialog: false,
+      editProviderDialog: false,
+      selectedProviders: [],
+      editedProvider: {
+        name: "",
+      },
+      editedClient: {
         name: "",
         email: "",
         phone: "",
@@ -370,56 +460,83 @@ export default {
     };
   },
   methods: {
-    closeNewDialog() {
-      this.newDialog = false;
-      // this.$nextTick(() => {
-      //   this.editedItem = Object.assign({}, this.defaultItem)
-      //   this.editedIndex = -1
-      // })
+    closeNewClientDialog() {
+      this.newClientDialog = false;
     },
-    closeEditDialog() {
-      this.editDialog = false;
+    closeClientEditDialog() {
+      this.editClientDialog = false;
     },
-    closeDeleteDialog() {
-      this.deleteDialog = false;
+    closeClientDeleteDialog() {
+      this.deleteClientDialog = false;
+    },
+    closeEditProviderDialog() {
+      this.editProviderDialog = false;
+    },
+    editCheckboxChange(val, pro) {
+      if (val) {
+        const exists = this.editedClient.providers.find((el) => el === pro._id);
+
+        if (!exists) {
+          this.editedClient.providers.push(pro._id);
+        }
+      } else {
+        const idx = this.editedClient.providers.indexOf(pro._id);
+        this.editedClient.providers.splice(idx, 1);
+      }
     },
     listProviders(pros) {
-      return pros.map((pro) => pro.name).join(", ");
+      return pros
+        .map((pro) => this.providers.find((el) => el._id === pro).name)
+        .join(", ");
     },
-    editItem(item) {
-      this.editedItem = {
+    editClient(item) {
+      this.editedClient = {
         name: item.name,
         email: item.email,
         phone: item.phone,
         providers: [...item.providers],
       };
     },
-    associatedProvider(currentProvider) {
-      return this.editedItem.providers.some(function (el) {
-        return el._id === currentProvider._id;
+    editProvider(pro) {
+      this.editedProvider = {
+        name: pro.name,
+      };
+    },
+    checkRelation(currentProvider) {
+      return this.editedClient.providers.some(function (el) {
+        return el === currentProvider._id;
       });
     },
     async addProvider() {
-      // v-model of input already bound so we can access value from data
-      // submit that name value to the provider creation endpoint
-      // clear out provider after submission
-
-      // what happens incase it fails to submit the request
-      // how do I handle that on the frontend
       try {
-        await api.post("/providers", this.newProvider);
+        const res = await api.post("/providers", this.newProvider);
         this.newProvider.name = "";
-        // emit an event to the parent to maybe fetch the providers one more time?
+        this.providers.push(res.data.data);
       } catch (error) {
-        // handle errors here
         // maybe incorporate a toastr that displays the received error
+        console.log("error adding provider ", error);
       }
     },
-    editCheckboxChange(val, pro) {
-      // console.log("checkbox event ", pro._id);
-      // if the value is true, we'll add the provider's id to the list of providers in the editedItem object
-      // can't do this cos the list of providers in the editedItem object has provider objects and not just their ids
-      // to mitigate this, the endpoint for all the resources has to have the id's of the providers and not the actual documents
+    async deleteProvider(id) {
+      try {
+        await api.delete(`/providers/${id}`);
+        const idx = this.providers.indexOf(id);
+        this.providers.splice(idx, 1);
+      } catch (error) {
+        console.log("error deleting provider ", error);
+        // TODO: display error toastr
+      }
+    },
+    async updateProvider(id) {
+      try {
+        const res = await api.put(`/providers/${id}`, this.editedProvider);
+        const updatedProvider = res.data.data;
+        this.providers.splice(this.providers.indexOf(id), 1, updatedProvider);
+        this.closeEditProviderDialog();
+      } catch (error) {
+        console.log("error updating provider ", error);
+        // TODO: display error toastr
+      }
     },
   },
 };
