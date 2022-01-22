@@ -521,6 +521,10 @@ export default {
     return {
       search: "",
       clientToDelete: "",
+      newClientDialog: false,
+      editClientDialog: false,
+      deleteClientDialog: false,
+      editProviderDialog: false,
       newProvider: {name: ""},
       newClient: {
         name: "",
@@ -528,10 +532,6 @@ export default {
         phone: "",
         providers: [],
       },
-      newClientDialog: false,
-      editClientDialog: false,
-      deleteClientDialog: false,
-      editProviderDialog: false,
       editedProvider: {
         name: "",
       },

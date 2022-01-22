@@ -1,8 +1,7 @@
 import axios from "axios";
 
-//TODO: use env variables to hide api uri
 const api = axios.create({
-  baseURL: "https://client-provider-api.herokuapp.com",
+  baseURL: process.env.VUE_APP_API_URI,
   headers: {"Content-Type": "application/json", Accept: "application/json"},
 });
 
