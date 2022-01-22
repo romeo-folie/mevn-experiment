@@ -525,6 +525,21 @@ export default {
       editClientDialog: false,
       deleteClientDialog: false,
       editProviderDialog: false,
+      headers: [
+        {
+          text: "Name",
+          align: "start",
+          value: "name",
+        },
+        {text: "Email", value: "email"},
+        {text: "Phone", value: "phone"},
+        {
+          text: "Providers",
+          value: "providers",
+          sortable: false,
+        },
+        {text: "Actions", value: "actions", sortable: false, align: "center"},
+      ],
       newProvider: {name: ""},
       newClient: {
         name: "",
@@ -542,21 +557,6 @@ export default {
         phone: "",
         providers: [],
       },
-      headers: [
-        {
-          text: "Name",
-          align: "start",
-          value: "name",
-        },
-        {text: "Email", value: "email"},
-        {text: "Phone", value: "phone"},
-        {
-          text: "Providers",
-          value: "providers",
-          sortable: false,
-        },
-        {text: "Actions", value: "actions", sortable: false, align: "center"},
-      ],
     };
   },
   methods: {

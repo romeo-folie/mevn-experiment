@@ -7,10 +7,19 @@ const providerRouter = require("./provider.routes");
 
 const router = express.Router();
 
-router.use("/clients", clientRouter);
-router.use("/providers", providerRouter);
-
-// TODO: Document in swagger
+/**
+ * @openapi
+ * /all:
+ *  get:
+ *    description: Get all resources
+ *    responses:
+ *      200:
+ *        description: Returned all resources
+ *      500:
+ *        description: Failed to return resources
+ *    tags:
+ *      - all
+ */
 router.get("/all", async (req, res) => {
   try {
     const clients = await clientModel.getClients();
@@ -21,5 +30,8 @@ router.get("/all", async (req, res) => {
     res.status(500).json({success: false, message: error.message});
   }
 });
+
+router.use("/clients", clientRouter);
+router.use("/providers", providerRouter);
 
 module.exports = router;
