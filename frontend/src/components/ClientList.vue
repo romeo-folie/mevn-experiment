@@ -34,7 +34,7 @@
                       <span class="label">Name:</span>
                     </v-col>
                     <v-col cols="10">
-                      <input type="text" />
+                      <input type="text" v-model="newClient.name" />
                     </v-col>
                   </v-row>
                 </div>
@@ -45,7 +45,7 @@
                       <span class="label">Email:</span>
                     </v-col>
                     <v-col cols="10">
-                      <input type="text" />
+                      <input type="text" v-model="newClient.email" />
                     </v-col>
                   </v-row>
                 </div>
@@ -56,7 +56,7 @@
                       <span class="label">Phone:</span>
                     </v-col>
                     <v-col cols="10">
-                      <input type="text" />
+                      <input type="text" v-model="newClient.phone" />
                     </v-col>
                   </v-row>
                 </div>
@@ -69,9 +69,10 @@
                     <v-col cols="10">
                       <v-row>
                         <v-col cols="8">
-                          <input type="text" />
+                          <input type="text" v-model="newProvider.name" />
                         </v-col>
                         <v-col cols="4">
+                          <!--TODO: Add spinner that displays while update process is ongoing -->
                           <v-btn elevation="1" width="100%" @click="addProvider"
                             >Add Provider</v-btn
                           >
@@ -81,7 +82,6 @@
                   </v-row>
                 </div>
 
-                <!-- List of providers -->
                 <div class="form-group">
                   <v-row>
                     <v-col cols="2"></v-col>
@@ -93,14 +93,16 @@
                               no-gutters
                               align="center"
                               v-for="pro in providers"
-                              :key="pro.id"
+                              :key="pro._id"
                             >
                               <v-col cols="8">
                                 <v-checkbox
                                   :label="pro.name"
+                                  :input-value="checkRelation(pro)"
                                   dense
                                   hide-details
                                   color="black"
+                                  @change="addCheckboxChange($event, pro)"
                                 ></v-checkbox>
                               </v-col>
 
@@ -108,16 +110,94 @@
                                 cols="2"
                                 class="d-flex justify-center align-center"
                               >
-                                <v-icon dense color="black"
-                                  >mdi-pencil-box-multiple-outline</v-icon
+                                <v-dialog
+                                  v-model="editProviderDialog"
+                                  max-width="40%"
+                                  persistent
+                                  :retain-focus="false"
                                 >
+                                  <template v-slot:activator="{on, attrs}">
+                                    <v-icon
+                                      dense
+                                      color="black"
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      @click="editProvider(pro)"
+                                      >mdi-pencil-box-multiple-outline</v-icon
+                                    >
+                                  </template>
+                                  <v-card>
+                                    <v-card-title>
+                                      <v-row
+                                        justify="space-between"
+                                        class="py-2"
+                                      >
+                                        <h3 class="modal-title">
+                                          Edit Provider
+                                        </h3>
+                                        <v-icon
+                                          dense
+                                          @click="closeProviderEditDialog"
+                                        >
+                                          mdi-close-circle
+                                        </v-icon>
+                                      </v-row>
+                                    </v-card-title>
+
+                                    <v-divider></v-divider>
+
+                                    <v-card-text>
+                                      <v-container class="form-wrap">
+                                        <div class="form-group">
+                                          <v-row>
+                                            <v-col
+                                              cols="2"
+                                              class="d-flex justify-end align-center"
+                                            >
+                                              <span class="label"
+                                                >Provider:</span
+                                              >
+                                            </v-col>
+                                            <v-col cols="10">
+                                              <v-row>
+                                                <v-col cols="8">
+                                                  <input
+                                                    type="text"
+                                                    v-model="
+                                                      editedProvider.name
+                                                    "
+                                                  />
+                                                </v-col>
+                                                <v-col cols="4">
+                                                  <v-btn
+                                                    elevation="1"
+                                                    @click="
+                                                      updateProvider(pro._id)
+                                                    "
+                                                    >Update Provider</v-btn
+                                                  >
+                                                </v-col>
+                                              </v-row>
+                                            </v-col>
+                                          </v-row>
+                                        </div>
+                                      </v-container>
+                                    </v-card-text>
+                                  </v-card>
+                                </v-dialog>
                               </v-col>
 
                               <v-col
                                 cols="2"
                                 class="d-flex justify-center align-center"
                               >
-                                <v-icon dense color="black">mdi-delete</v-icon>
+                                <!-- TODO: Add spinner that displays while update process is ongoing -->
+                                <v-icon
+                                  dense
+                                  color="black"
+                                  @click="deleteProvider(pro._id)"
+                                  >mdi-delete</v-icon
+                                >
                               </v-col>
                             </v-row>
                           </div>
@@ -137,7 +217,7 @@
               <v-btn @click="closeNewClientDialog" elevation="1" class="mr-4">
                 Cancel
               </v-btn>
-              <v-btn elevation="1"> Add client </v-btn>
+              <v-btn elevation="1" @click="addClient"> Add client </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -289,7 +369,7 @@
                                           </h3>
                                           <v-icon
                                             dense
-                                            @click="closeEditProviderDialog"
+                                            @click="closeProviderEditDialog"
                                           >
                                             mdi-close-circle
                                           </v-icon>
@@ -364,7 +444,14 @@
               <v-divider></v-divider>
 
               <v-card-actions>
-                <v-btn color="red" dark elevation="1"> Delete client </v-btn>
+                <v-btn
+                  color="red"
+                  dark
+                  elevation="1"
+                  @click="deleteClient(editedClient.id)"
+                >
+                  Delete client
+                </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn
                   @click="closeClientEditDialog"
@@ -373,18 +460,25 @@
                 >
                   Cancel
                 </v-btn>
-                <v-btn elevation="1"> Update client </v-btn>
+                <v-btn elevation="1" @click="updateClient(editedClient.id)">
+                  Update client
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <v-dialog v-model="deleteClientDialog" max-width="500px">
+          <v-dialog
+            v-model="deleteClientDialog"
+            max-width="500px"
+            :retain-focus="false"
+          >
             <template v-slot:activator="{on, attrs}">
               <v-btn
-                elevation="1"
+                elevation="2"
                 color="red"
                 dark
                 x-small
                 v-on="on"
+                @click="setClientToDelete(item._id)"
                 v-bind="attrs"
                 >Delete</v-btn
               >
@@ -401,7 +495,12 @@
                   @click="closeClientDeleteDialog"
                   >Cancel</v-btn
                 >
-                <v-btn color="blue darken-1" text>OK</v-btn>
+                <v-btn
+                  color="blue darken-1"
+                  text
+                  @click="deleteClient(clientToDelete)"
+                  >OK</v-btn
+                >
                 <v-spacer></v-spacer>
               </v-card-actions>
             </v-card>
@@ -421,6 +520,7 @@ export default {
   data() {
     return {
       search: "",
+      clientToDelete: "",
       newProvider: {name: ""},
       newClient: {
         name: "",
@@ -432,11 +532,11 @@ export default {
       editClientDialog: false,
       deleteClientDialog: false,
       editProviderDialog: false,
-      selectedProviders: [],
       editedProvider: {
         name: "",
       },
       editedClient: {
+        id: "",
         name: "",
         email: "",
         phone: "",
@@ -460,17 +560,46 @@ export default {
     };
   },
   methods: {
+    setClientToDelete(id) {
+      this.clientToDelete = id;
+    },
     closeNewClientDialog() {
+      this.newClient = {
+        name: "",
+        email: "",
+        phone: "",
+        providers: [],
+      };
       this.newClientDialog = false;
     },
     closeClientEditDialog() {
+      this.editedClient = {
+        name: "",
+        email: "",
+        phone: "",
+        providers: [],
+      };
       this.editClientDialog = false;
     },
     closeClientDeleteDialog() {
+      this.clientToDelete = "";
       this.deleteClientDialog = false;
     },
-    closeEditProviderDialog() {
+    closeProviderEditDialog() {
+      this.editedProvider = {name: ""};
       this.editProviderDialog = false;
+    },
+    addCheckboxChange(val, pro) {
+      if (val) {
+        const exists = this.newClient.providers.find((el) => el === pro._id);
+
+        if (!exists) {
+          this.newClient.providers.push(pro._id);
+        }
+      } else {
+        const idx = this.newClient.providers.indexOf(pro._id);
+        this.newClient.providers.splice(idx, 1);
+      }
     },
     editCheckboxChange(val, pro) {
       if (val) {
@@ -491,6 +620,7 @@ export default {
     },
     editClient(item) {
       this.editedClient = {
+        id: item._id,
         name: item.name,
         email: item.email,
         phone: item.phone,
@@ -513,15 +643,14 @@ export default {
         this.newProvider.name = "";
         this.providers.push(res.data.data);
       } catch (error) {
-        // maybe incorporate a toastr that displays the received error
         console.log("error adding provider ", error);
+        // TODO: display error toastr
       }
     },
     async deleteProvider(id) {
       try {
         await api.delete(`/providers/${id}`);
-        const idx = this.providers.indexOf(id);
-        this.providers.splice(idx, 1);
+        this.providers.splice(this.providers.indexOf(id), 1);
       } catch (error) {
         console.log("error deleting provider ", error);
         // TODO: display error toastr
@@ -532,9 +661,44 @@ export default {
         const res = await api.put(`/providers/${id}`, this.editedProvider);
         const updatedProvider = res.data.data;
         this.providers.splice(this.providers.indexOf(id), 1, updatedProvider);
-        this.closeEditProviderDialog();
+        this.closeProviderEditDialog();
       } catch (error) {
         console.log("error updating provider ", error);
+        // TODO: display error toastr
+      }
+    },
+    async addClient() {
+      try {
+        const res = await api.post("/clients", this.newClient);
+        const newClient = res.data.data;
+        this.clients.push(newClient);
+        this.closeNewClientDialog();
+      } catch (error) {
+        console.log("error adding client ", error);
+        // TODO: display error toastr
+      }
+    },
+    async deleteClient(id) {
+      try {
+        await api.delete(`/clients/${id}`);
+        this.closeClientEditDialog();
+        const idx = this.clients.findIndex((el) => el._id === id);
+        this.clients.splice(idx, 1);
+        this.closeClientDeleteDialog();
+      } catch (error) {
+        console.log("error deleting client ", error);
+        // TODO: display error toastr
+      }
+    },
+    async updateClient(id) {
+      try {
+        const res = await api.put(`/clients/${id}`, this.editedClient);
+        const updatedClient = res.data.data;
+        const idx = this.clients.findIndex((el) => el._id === id);
+        this.clients.splice(idx, 1, updatedClient);
+        this.closeClientEditDialog();
+      } catch (error) {
+        console.log("error updating client ", error);
         // TODO: display error toastr
       }
     },
