@@ -1,4 +1,6 @@
 <template>
+  <!-- TODO: Define general spinner for all async ops -->
+  <!-- Host on netlify -->
   <v-container>
     <v-row class="mb-5 mt-5">
       <h2>List of Clients</h2>
@@ -642,18 +644,20 @@ export default {
         const res = await api.post("/providers", this.newProvider);
         this.newProvider.name = "";
         this.providers.push(res.data.data);
+        this.$toastr.s("Successfully added provider", "Success");
       } catch (error) {
         console.log("error adding provider ", error);
-        // TODO: display error toastr
+        this.$toastr.e("Failed to add provider", "Error");
       }
     },
     async deleteProvider(id) {
       try {
         await api.delete(`/providers/${id}`);
         this.providers.splice(this.providers.indexOf(id), 1);
+        this.$toastr.s("Successfully deleted provider", "Success");
       } catch (error) {
         console.log("error deleting provider ", error);
-        // TODO: display error toastr
+        this.$toastr.e("Failed to delete provider", "Error");
       }
     },
     async updateProvider(id) {
@@ -662,9 +666,10 @@ export default {
         const updatedProvider = res.data.data;
         this.providers.splice(this.providers.indexOf(id), 1, updatedProvider);
         this.closeProviderEditDialog();
+        this.$toastr.s("Successfully updated provider", "Success");
       } catch (error) {
         console.log("error updating provider ", error);
-        // TODO: display error toastr
+        this.$toastr.e("Failed to update provider", "Error");
       }
     },
     async addClient() {
@@ -673,9 +678,10 @@ export default {
         const newClient = res.data.data;
         this.clients.push(newClient);
         this.closeNewClientDialog();
+        this.$toastr.s("Successfully added client", "Success");
       } catch (error) {
         console.log("error adding client ", error);
-        // TODO: display error toastr
+        this.$toastr.e("Failed to add client", "Error");
       }
     },
     async deleteClient(id) {
@@ -685,9 +691,10 @@ export default {
         const idx = this.clients.findIndex((el) => el._id === id);
         this.clients.splice(idx, 1);
         this.closeClientDeleteDialog();
+        this.$toastr.s("Successfully deleted client", "Success");
       } catch (error) {
         console.log("error deleting client ", error);
-        // TODO: display error toastr
+        this.$toastr.e("Failed to delete client", "Error");
       }
     },
     async updateClient(id) {
@@ -699,7 +706,7 @@ export default {
         this.closeClientEditDialog();
       } catch (error) {
         console.log("error updating client ", error);
-        // TODO: display error toastr
+        this.$toastr.e("Failed to update client", "Error");
       }
     },
   },
