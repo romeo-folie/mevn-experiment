@@ -104,6 +104,7 @@
                                 <v-col cols="8">
                                   <v-checkbox
                                     :label="pro.name"
+                                    :input-value="false"
                                     dense
                                     hide-details
                                     color="black"
@@ -677,12 +678,21 @@ export default {
       this.loading = false;
     },
     async deleteProvider(id) {
-      // TODO: Add constraint that makes sure that deleted provider is removed from all clients that are linked to it
-      // if I can't do it in the model, then I have to do it from here
+      // TODO: Set page title to something other than frontend
       try {
         this.loading = true;
         await api.delete(`/providers/${id}`);
         this.providers.splice(this.providers.indexOf(id), 1);
+
+        this.clients = this.clients.map((cl) => {
+          const idx = cl.providers.indexOf(id);
+          if (idx >= 0) {
+            cl.providers.splice(idx, 1);
+          }
+          return cl;
+        });
+
+
         this.$toastr.s("Successfully deleted provider", "Success");
       } catch (error) {
         // console.log("error deleting provider ", error);
