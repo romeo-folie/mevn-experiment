@@ -94,7 +94,10 @@
                       <v-col cols="10">
                         <v-row>
                           <v-col cols="8">
-                            <div class="provider-list">
+                            <div
+                              class="provider-list"
+                              v-show="providers.length"
+                            >
                               <v-row
                                 no-gutters
                                 align="center"
@@ -327,7 +330,10 @@
                         <v-col cols="10">
                           <v-row>
                             <v-col cols="8">
-                              <div class="provider-list">
+                              <div
+                                class="provider-list"
+                                v-show="providers.length"
+                              >
                                 <v-row
                                   no-gutters
                                   align="center"
@@ -536,6 +542,9 @@
 <script>
 import api from "../utils/api";
 
+// TODO: To avoid mutating props directly
+// Emit events after all async activities so the parent can pull the newest information
+// from the server
 export default {
   name: "ClientList",
   props: ["clients", "providers"],
@@ -593,10 +602,12 @@ export default {
         phone: "",
         providers: [],
       };
+      // this.newProvider.name = "";
       this.newClientDialog = false;
     },
     closeClientEditDialog() {
       this.editedClient = {
+        id: "",
         name: "",
         email: "",
         phone: "",
@@ -678,12 +689,13 @@ export default {
       this.loading = false;
     },
     async deleteProvider(id) {
-      // TODO: Set page title to something other than frontend
       try {
         this.loading = true;
         await api.delete(`/providers/${id}`);
+
         this.providers.splice(this.providers.indexOf(id), 1);
 
+        // remove all links to clients
         this.clients = this.clients.map((cl) => {
           const idx = cl.providers.indexOf(id);
           if (idx >= 0) {
@@ -691,7 +703,6 @@ export default {
           }
           return cl;
         });
-
 
         this.$toastr.s("Successfully deleted provider", "Success");
       } catch (error) {
