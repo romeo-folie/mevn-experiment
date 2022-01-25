@@ -692,8 +692,10 @@ export default {
       try {
         this.loading = true;
         await api.delete(`/providers/${id}`);
-        const idx = this.editedClient.providers.indexOf(id);
-        this.editedClient.providers.splice(idx, 1);
+        if (this.editedClient.providers.length) {
+          const idx = this.editedClient.providers.indexOf(id);
+          this.editedClient.providers.splice(idx, 1);
+        }
         // TODO: Might have to close modals here
         this.$emit("refresh");
 
