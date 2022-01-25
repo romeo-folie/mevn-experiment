@@ -1,7 +1,11 @@
 <template>
   <v-app>
     <v-main>
-      <ClientList :clients="clients" :providers="providers" />
+      <ClientList
+        :clients="clients"
+        :providers="providers"
+        @refresh="fetchData"
+      />
     </v-main>
   </v-app>
 </template>
@@ -22,10 +26,10 @@ export default {
     };
   },
   mounted() {
-    this.fetchClients();
+    this.fetchData();
   },
   methods: {
-    async fetchClients() {
+    async fetchData() {
       const res = await api.get("/all");
       this.clients = res.data.data.clients;
       this.providers = res.data.data.providers;

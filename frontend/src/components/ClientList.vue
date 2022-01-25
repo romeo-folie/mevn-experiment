@@ -541,7 +541,7 @@
 
 <script>
 import api from "../utils/api";
-
+// TODO: Deal with new client dialog checkbox auto check issue
 // TODO: To avoid mutating props directly
 // Emit events after all async activities so the parent can pull the newest information
 // from the server
@@ -602,7 +602,6 @@ export default {
         phone: "",
         providers: [],
       };
-      // this.newProvider.name = "";
       this.newClientDialog = false;
     },
     closeClientEditDialog() {
@@ -678,9 +677,10 @@ export default {
     async addProvider() {
       try {
         this.loading = true;
-        const res = await api.post("/providers", this.newProvider);
+        await api.post("/providers", this.newProvider);
         this.newProvider.name = "";
-        this.providers.push(res.data.data);
+        this.$emit("refresh");
+        // this.providers.push(res.data.data);
         this.$toastr.s("Successfully added provider", "Success");
       } catch (error) {
         // console.log("error adding provider ", error);
@@ -692,17 +692,10 @@ export default {
       try {
         this.loading = true;
         await api.delete(`/providers/${id}`);
-
-        this.providers.splice(this.providers.indexOf(id), 1);
-
-        // remove all links to clients
-        this.clients = this.clients.map((cl) => {
-          const idx = cl.providers.indexOf(id);
-          if (idx >= 0) {
-            cl.providers.splice(idx, 1);
-          }
-          return cl;
-        });
+        const idx = this.editedClient.providers.indexOf(id);
+        this.editedClient.providers.splice(idx, 1);
+        // TODO: Might have to close modals here
+        this.$emit("refresh");
 
         this.$toastr.s("Successfully deleted provider", "Success");
       } catch (error) {
@@ -714,9 +707,8 @@ export default {
     async updateProvider(id) {
       try {
         this.loading = true;
-        const res = await api.put(`/providers/${id}`, this.editedProvider);
-        const updatedProvider = res.data.data;
-        this.providers.splice(this.providers.indexOf(id), 1, updatedProvider);
+        await api.put(`/providers/${id}`, this.editedProvider);
+        this.$emit("refresh");
         this.closeProviderEditDialog();
         this.$toastr.s("Successfully updated provider", "Success");
       } catch (error) {
@@ -728,9 +720,8 @@ export default {
     async addClient() {
       try {
         this.loading = true;
-        const res = await api.post("/clients", this.newClient);
-        const newClient = res.data.data;
-        this.clients.push(newClient);
+        await api.post("/clients", this.newClient);
+        this.$emit("refresh");
         this.closeNewClientDialog();
         this.$toastr.s("Successfully added client", "Success");
       } catch (error) {
@@ -741,11 +732,12 @@ export default {
     },
     async deleteClient(id) {
       try {
+        // remove deleted provider from list of edited client providers
+        // this is so that updates to the client will not send deleted data to the api
         this.loading = true;
         await api.delete(`/clients/${id}`);
         this.closeClientEditDialog();
-        const idx = this.clients.findIndex((el) => el._id === id);
-        this.clients.splice(idx, 1);
+        this.$emit("refresh");
         this.closeClientDeleteDialog();
         this.$toastr.s("Successfully deleted client", "Success");
       } catch (error) {
@@ -757,10 +749,8 @@ export default {
     async updateClient(id) {
       try {
         this.loading = true;
-        const res = await api.put(`/clients/${id}`, this.editedClient);
-        const updatedClient = res.data.data;
-        const idx = this.clients.findIndex((el) => el._id === id);
-        this.clients.splice(idx, 1, updatedClient);
+        await api.put(`/clients/${id}`, this.editedClient);
+        this.$emit("refresh");
         this.closeClientEditDialog();
       } catch (error) {
         // console.log("error updating client ", error);
