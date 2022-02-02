@@ -1,5 +1,4 @@
 <template>
-  <!-- TODO: Define general spinner for all async ops -->
   <div>
     <v-container>
       <v-row class="mb-5 mt-5">
@@ -36,7 +35,26 @@
                         <span class="label">Name:</span>
                       </v-col>
                       <v-col cols="10">
-                        <input type="text" v-model="newClient.name" />
+                        <input
+                          type="text"
+                          v-model.trim="$v.newClient.name.$model"
+                          :class="{'group-error': $v.newClient.name.$error}"
+                        />
+                      </v-col>
+                    </v-row>
+                    <v-row
+                      v-if="
+                        $v.newClient.name.$dirty && $v.newClient.name.$error
+                      "
+                    >
+                      <v-col cols="2"> </v-col>
+                      <v-col cols="10">
+                        <div
+                          class="error-text"
+                          v-if="!$v.newClient.name.required"
+                        >
+                          Field is required
+                        </div>
                       </v-col>
                     </v-row>
                   </div>
@@ -47,7 +65,32 @@
                         <span class="label">Email:</span>
                       </v-col>
                       <v-col cols="10">
-                        <input type="text" v-model="newClient.email" />
+                        <input
+                          type="text"
+                          v-model.trim="$v.newClient.email.$model"
+                          :class="{'group-error': $v.newClient.email.$error}"
+                        />
+                      </v-col>
+                    </v-row>
+                    <v-row
+                      v-if="
+                        $v.newClient.email.$dirty && $v.newClient.email.$error
+                      "
+                    >
+                      <v-col cols="2"> </v-col>
+                      <v-col cols="10">
+                        <div
+                          class="error-text"
+                          v-if="!$v.newClient.email.required"
+                        >
+                          Field is required
+                        </div>
+                        <div
+                          class="error-text"
+                          v-if="!$v.newClient.email.email"
+                        >
+                          Must be a valid email
+                        </div>
                       </v-col>
                     </v-row>
                   </div>
@@ -58,7 +101,33 @@
                         <span class="label">Phone:</span>
                       </v-col>
                       <v-col cols="10">
-                        <input type="text" v-model="newClient.phone" />
+                        <input
+                          type="text"
+                          v-model.trim="$v.newClient.phone.$model"
+                          :class="{'group-error': $v.newClient.phone.$error}"
+                        />
+                      </v-col>
+                    </v-row>
+
+                    <v-row
+                      v-if="
+                        $v.newClient.phone.$dirty && $v.newClient.phone.$error
+                      "
+                    >
+                      <v-col cols="2"> </v-col>
+                      <v-col cols="10">
+                        <div
+                          class="error-text"
+                          v-if="!$v.newClient.phone.required"
+                        >
+                          Field is required
+                        </div>
+                        <div
+                          class="error-text"
+                          v-if="!$v.newClient.phone.numeric"
+                        >
+                          Value must be numeric
+                        </div>
                       </v-col>
                     </v-row>
                   </div>
@@ -74,7 +143,6 @@
                             <input type="text" v-model="newProvider.name" />
                           </v-col>
                           <v-col cols="4">
-                            <!--TODO: Add spinner that displays while update process is ongoing -->
                             <v-btn
                               elevation="1"
                               width="100%"
@@ -107,7 +175,6 @@
                                 <v-col cols="8">
                                   <v-checkbox
                                     :label="pro.name"
-                                    :input-value="false"
                                     dense
                                     hide-details
                                     color="black"
@@ -200,7 +267,6 @@
                                   cols="2"
                                   class="d-flex justify-center align-center"
                                 >
-                                  <!-- TODO: Add spinner that displays while update process is ongoing -->
                                   <v-icon
                                     dense
                                     color="black"
@@ -541,17 +607,20 @@
 
 <script>
 import api from "../utils/api";
-// TODO: Deal with new client dialog checkbox auto check issue
-// TODO: To avoid mutating props directly
-// Emit events after all async activities so the parent can pull the newest information
-// from the server
+import {required, email, numeric} from "vuelidate/lib/validators";
+// import NewClientForm from "./NewClientForm.vue";
+
 export default {
   name: "ClientList",
   props: ["clients", "providers"],
+  // components: {
+  //   NewClientForm,
+  // },
   data() {
     return {
       search: "",
       clientToDelete: "",
+      checkboxDefault: false,
       loading: false,
       newClientDialog: false,
       editClientDialog: false,
@@ -591,11 +660,40 @@ export default {
       },
     };
   },
+  validations: {
+    newClient: {
+      name: {
+        required,
+      },
+      email: {
+        required,
+        email,
+      },
+      phone: {
+        required,
+        numeric,
+      },
+    },
+    editedClient: {
+      name: {
+        required,
+      },
+      email: {
+        required,
+        email,
+      },
+      phone: {
+        required,
+        numeric,
+      },
+    },
+  },
   methods: {
     setClientToDelete(id) {
       this.clientToDelete = id;
     },
     closeNewClientDialog() {
+      // TODO: Find a way to reset v-checkbox values in the form
       this.newClient = {
         name: "",
         email: "",
@@ -630,6 +728,7 @@ export default {
           this.newClient.providers.push(pro._id);
         }
       } else {
+        this.checkboxDefault = false;
         const idx = this.newClient.providers.indexOf(pro._id);
         this.newClient.providers.splice(idx, 1);
       }
@@ -720,6 +819,8 @@ export default {
       this.loading = false;
     },
     async addClient() {
+      //TODO: Make checks to ensure that actual values are coming in
+      // Some kind of validation should occur
       try {
         this.loading = true;
         await api.post("/clients", this.newClient);
@@ -764,7 +865,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .modal-title {
   color: #517885;
 }
@@ -815,5 +916,13 @@ button {
 
 i {
   cursor: pointer !important;
+}
+
+.error-text {
+  color: red;
+}
+
+.group-error {
+  border: 1px solid red !important;
 }
 </style>
