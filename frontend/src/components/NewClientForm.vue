@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: Get this component working -->
   <v-card>
     <v-card-title>
       <h3 class="modal-title">New Client</h3>
@@ -80,6 +81,14 @@
               <div class="error-text" v-if="!$v.newClient.phone.numeric">
                 Value must be numeric
               </div>
+              <div class="error-text" v-if="!$v.newClient.phone.minLength">
+                Field must have at least
+                {{ $v.newClient.phone.$params.minLength.min }} characters
+              </div>
+              <div class="error-text" v-if="!$v.newClient.phone.maxLength">
+                Field must have at most
+                {{ $v.newClient.phone.$params.maxLength.max }} characters
+              </div>
             </v-col>
           </v-row>
         </div>
@@ -92,14 +101,18 @@
             <v-col cols="10">
               <v-row>
                 <v-col cols="8">
-                  <input type="text" v-model="newProvider.name" />
+                  <input
+                    type="text"
+                    :value="newProvider.name"
+                    @change="$emit('update:provider', $event.target.value)"
+                  />
                 </v-col>
                 <v-col cols="4">
                   <v-btn
                     elevation="1"
                     width="100%"
                     @click="addProvider"
-                    :disabled="!newProvider.name.length"
+                    :disabled="newProvider.name === ''"
                     >Add Provider</v-btn
                   >
                 </v-col>
@@ -118,17 +131,30 @@
                     <v-row
                       no-gutters
                       align="center"
-                      v-for="pro in providers"
+                      v-for="(pro, idx) in providers"
                       :key="pro._id"
                     >
                       <v-col cols="8">
-                        <v-checkbox
+                        <!-- <v-checkbox
                           :label="pro.name"
+                          :checked="false"
                           dense
                           hide-details
                           color="black"
-                          @change="addCheckboxChange($event, pro)"
-                        ></v-checkbox>
+                          @change="
+                            $emit('addCheckboxChange', $event, pro, newClient)
+                          "
+                        ></v-checkbox> -->
+                        <div class="check-group">
+                          <label :for="'check-' + idx">{{ pro.name }}</label>
+                          <input
+                            type="checkbox"
+                            :id="'check-' + idx"
+                            @change="
+                              $emit('addCheckboxChange', $event, pro, newClient)
+                            "
+                          />
+                        </div>
                       </v-col>
 
                       <v-col
@@ -227,16 +253,125 @@
       <v-btn @click="closeNewClientDialog" elevation="1" class="mr-4">
         Cancel
       </v-btn>
-      <v-btn elevation="1" @click="addClient"> Add client </v-btn>
+      <v-btn elevation="1" @click="addClient" :disabled="$v.$invalid">
+        Add client
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import {
+  required,
+  email,
+  numeric,
+  maxLength,
+  minLength,
+} from "vuelidate/lib/validators";
+import $ from "jquery";
+
 export default {
   name: "NewClientForm",
-  props: ["newClient"],
+  props: {
+    newProvider: {
+      required: true,
+      type: Object,
+      default: () => ({name: ""}),
+    },
+    providers: {
+      required: true,
+      type: Array,
+      default: () => [],
+    },
+    editProviderDialog: {
+      required: true,
+      type: Boolean,
+      default: false,
+    },
+    editedProvider: {
+      required: true,
+      type: Object,
+      default: () => ({name: ""}),
+    },
+  },
+  data() {
+    return {
+      newClient: {
+        name: "",
+        email: "",
+        phone: "",
+        providers: [],
+      },
+    };
+  },
+  validations: {
+    newClient: {
+      name: {
+        required,
+      },
+      email: {
+        required,
+        email,
+      },
+      phone: {
+        required,
+        numeric,
+        minLength: minLength(10),
+        maxLength: maxLength(10),
+      },
+    },
+  },
+  methods: {
+    addProvider() {
+      this.$emit("addProvider");
+    },
+    closeProviderEditDialog() {
+      this.$emit("closeProviderEditDialog");
+    },
+    addClient() {
+      this.$emit("addClient", this.newClient);
+      this.$v.$reset();
+      this.newClient = {
+        name: "",
+        email: "",
+        phone: "",
+        providers: [],
+      };
+      this.resetCheckboxes();
+    },
+    closeNewClientDialog() {
+      this.$emit("closeNewClientDialog");
+    },
+    resetCheckboxes() {
+      $(":checkbox").prop("checked", false);
+    },
+  },
 };
 </script>
 
-<style></style>
+<style>
+.check-group {
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  padding: 5px 0;
+}
+
+input[type="checkbox"] {
+  max-width: 30%;
+  -ms-transform: scale(1.3);
+  -moz-transform: scale(1.3);
+  -webkit-transform: scale(1.3);
+  -o-transform: scale(1.3);
+  transform: scale(1.3);
+  padding: 5px;
+  accent-color: black;
+  cursor: pointer;
+}
+
+.check-group label {
+  font-size: 15px;
+  color: black;
+}
+</style>
