@@ -101,11 +101,7 @@
             <v-col cols="10">
               <v-row>
                 <v-col cols="8">
-                  <input
-                    type="text"
-                    :value="newProvider.name"
-                    @change="$emit('update:provider', $event.target.value)"
-                  />
+                  <input type="text" v-model="newProvider.name" />
                 </v-col>
                 <v-col cols="4">
                   <v-btn
@@ -273,34 +269,26 @@ import $ from "jquery";
 export default {
   name: "NewClientForm",
   props: {
-    newProvider: {
-      required: true,
-      type: Object,
-      default: () => ({name: ""}),
-    },
     providers: {
       required: true,
       type: Array,
       default: () => [],
     },
-    editProviderDialog: {
-      required: true,
-      type: Boolean,
-      default: false,
-    },
-    editedProvider: {
-      required: true,
-      type: Object,
-      default: () => ({name: ""}),
-    },
   },
   data() {
     return {
+      editProviderDialog: false,
       newClient: {
         name: "",
         email: "",
         phone: "",
         providers: [],
+      },
+      newProvider: {
+        name: "",
+      },
+      editedProvider: {
+        name: "",
       },
     };
   },
@@ -323,10 +311,24 @@ export default {
   },
   methods: {
     addProvider() {
-      this.$emit("addProvider");
+      this.$emit("addProvider", this.newProvider);
+      this.newProvider.name = "";
+    },
+    editProvider(pro) {
+      this.editedProvider = {
+        name: pro.name,
+      };
+    },
+    updateProvider(providerId) {
+      this.$emit("updateProvider", providerId, this.editedProvider);
+      this.closeProviderEditDialog();
+    },
+    deleteProvider(providerId) {
+      this.$emit("deleteProvider", providerId);
     },
     closeProviderEditDialog() {
-      this.$emit("closeProviderEditDialog");
+      this.editedProvider.name = "";
+      this.editProviderDialog = false;
     },
     addClient() {
       this.$emit("addClient", this.newClient);

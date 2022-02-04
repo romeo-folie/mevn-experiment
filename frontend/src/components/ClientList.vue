@@ -22,15 +22,14 @@
             </template>
             <NewClientForm
               :providers="providers"
-              :newProvider="newProvider"
               :editedProvider="editedProvider"
               :editProviderDialog="editProviderDialog"
               @addClient="addClient"
               @addProvider="addProvider"
-              @update:provider="setProvider"
+              @updateProvider="updateProvider"
+              @deleteProvider="deleteProvider"
               @addCheckboxChange="addCheckboxChange"
               @closeNewClientDialog="closeNewClientDialog"
-              @closeProviderEditDialog="closeProviderEditDialog"
             />
           </v-dialog>
         </v-card-title>
@@ -407,9 +406,6 @@ export default {
     },
   },
   methods: {
-    setProvider(val) {
-      this.newProvider.name = val.trim();
-    },
     setClientToDelete(id) {
       this.clientToDelete = id;
     },
@@ -430,10 +426,10 @@ export default {
       this.clientToDelete = "";
       this.deleteClientDialog = false;
     },
-    closeProviderEditDialog() {
-      this.editedProvider.name = "";
-      this.editProviderDialog = false;
-    },
+    // closeProviderEditDialog() {
+    //   this.editedProvider.name = "";
+    //   this.editProviderDialog = false;
+    // },
     addCheckboxChange(val, pro, newClient) {
       if (val) {
         const exists = newClient.providers.find((el) => el === pro._id);
@@ -486,11 +482,10 @@ export default {
         return el === currentProvider._id;
       });
     },
-    async addProvider() {
+    async addProvider(newProvider) {
       try {
         this.loading = true;
-        await api.post("/providers", this.newProvider);
-        this.newProvider.name = "";
+        await api.post("/providers", newProvider);
         this.$emit("refresh");
         // this.providers.push(res.data.data);
         this.$toastr.s("Successfully added provider", "Success");
@@ -504,11 +499,10 @@ export default {
       try {
         this.loading = true;
         await api.delete(`/providers/${id}`);
-        if (this.editedClient.providers.length) {
-          const idx = this.editedClient.providers.indexOf(id);
-          this.editedClient.providers.splice(idx, 1);
-        }
-        // TODO: Might have to close modals here
+        // if (this.editedClient.providers.length) {
+        //   const idx = this.editedClient.providers.indexOf(id);
+        //   this.editedClient.providers.splice(idx, 1);
+        // }
         this.$emit("refresh");
 
         this.$toastr.s("Successfully deleted provider", "Success");
@@ -518,12 +512,12 @@ export default {
       }
       this.loading = false;
     },
-    async updateProvider(id) {
+    async updateProvider(proId, updatedProvider) {
       try {
         this.loading = true;
-        await api.put(`/providers/${id}`, this.editedProvider);
+        await api.put(`/providers/${proId}`, updatedProvider);
         this.$emit("refresh");
-        this.closeProviderEditDialog();
+        // this.closeProviderEditDialog();
         this.$toastr.s("Successfully updated provider", "Success");
       } catch (error) {
         // console.log("error updating provider ", error);
