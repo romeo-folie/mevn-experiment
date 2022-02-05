@@ -13,6 +13,7 @@ providerSchema.post("findOneAndRemove", async function (doc) {
     clients.map(async (cl) => {
       if (cl.providers.length) {
         const idx = cl.providers.indexOf(doc._id);
+
         if (idx >= 0) {
           cl.providers.splice(idx, 1);
           await clientModel.updateClient(cl._id, cl);

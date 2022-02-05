@@ -59,229 +59,18 @@
                   >Edit</v-btn
                 >
               </template>
-              <v-card>
-                <v-card-title>
-                  <h3 class="modal-title">Edit Client</h3>
-                </v-card-title>
-
-                <v-divider></v-divider>
-
-                <v-card-text>
-                  <v-container class="form-wrap">
-                    <div class="form-group">
-                      <v-row>
-                        <v-col cols="2" class="d-flex justify-end align-center">
-                          <span class="label">Name:</span>
-                        </v-col>
-                        <v-col cols="10">
-                          <input type="text" v-model="editedClient.name" />
-                        </v-col>
-                      </v-row>
-                    </div>
-
-                    <div class="form-group">
-                      <v-row>
-                        <v-col cols="2" class="d-flex justify-end align-center">
-                          <span class="label">Email:</span>
-                        </v-col>
-                        <v-col cols="10">
-                          <input type="text" v-model="editedClient.email" />
-                        </v-col>
-                      </v-row>
-                    </div>
-
-                    <div class="form-group">
-                      <v-row>
-                        <v-col cols="2" class="d-flex justify-end align-center">
-                          <span class="label">Phone:</span>
-                        </v-col>
-                        <v-col cols="10">
-                          <input type="text" v-model="editedClient.phone" />
-                        </v-col>
-                      </v-row>
-                    </div>
-
-                    <div class="form-group">
-                      <v-row>
-                        <v-col cols="2" class="d-flex justify-end align-center">
-                          <span class="label">Provider:</span>
-                        </v-col>
-                        <v-col cols="10">
-                          <v-row>
-                            <v-col cols="8">
-                              <input type="text" v-model="newProvider.name" />
-                            </v-col>
-                            <v-col cols="4">
-                              <v-btn
-                                elevation="1"
-                                width="100%"
-                                @click="addProvider"
-                                :disabled="!newProvider.name.length"
-                                >Add Provider</v-btn
-                              >
-                            </v-col>
-                          </v-row>
-                        </v-col>
-                      </v-row>
-                    </div>
-
-                    <!-- List of providers -->
-                    <div class="form-group">
-                      <v-row>
-                        <v-col cols="2"></v-col>
-                        <v-col cols="10">
-                          <v-row>
-                            <v-col cols="8">
-                              <div
-                                class="provider-list"
-                                v-show="providers.length"
-                              >
-                                <v-row
-                                  no-gutters
-                                  align="center"
-                                  v-for="pro in providers"
-                                  :key="pro._id"
-                                >
-                                  <v-col cols="8">
-                                    <v-checkbox
-                                      :label="pro.name"
-                                      :input-value="checkRelation(pro)"
-                                      @change="editCheckboxChange($event, pro)"
-                                      dense
-                                      hide-details
-                                      color="black"
-                                    ></v-checkbox>
-                                  </v-col>
-
-                                  <v-col
-                                    cols="2"
-                                    class="d-flex justify-center align-center"
-                                  >
-                                    <v-dialog
-                                      v-model="editProviderDialog"
-                                      max-width="40%"
-                                      persistent
-                                      :retain-focus="false"
-                                    >
-                                      <template v-slot:activator="{on, attrs}">
-                                        <v-icon
-                                          dense
-                                          color="black"
-                                          v-bind="attrs"
-                                          v-on="on"
-                                          @click="editProvider(pro)"
-                                          >mdi-pencil-box-multiple-outline</v-icon
-                                        >
-                                      </template>
-                                      <v-card>
-                                        <v-card-title>
-                                          <v-row
-                                            justify="space-between"
-                                            class="py-2"
-                                          >
-                                            <h3 class="modal-title">
-                                              Edit Provider
-                                            </h3>
-                                            <v-icon
-                                              dense
-                                              @click="closeProviderEditDialog"
-                                            >
-                                              mdi-close-circle
-                                            </v-icon>
-                                          </v-row>
-                                        </v-card-title>
-
-                                        <v-divider></v-divider>
-
-                                        <v-card-text>
-                                          <v-container class="form-wrap">
-                                            <div class="form-group">
-                                              <v-row>
-                                                <v-col
-                                                  cols="2"
-                                                  class="d-flex justify-end align-center"
-                                                >
-                                                  <span class="label"
-                                                    >Provider:</span
-                                                  >
-                                                </v-col>
-                                                <v-col cols="10">
-                                                  <v-row>
-                                                    <v-col cols="8">
-                                                      <input
-                                                        type="text"
-                                                        v-model="
-                                                          editedProvider.name
-                                                        "
-                                                      />
-                                                    </v-col>
-                                                    <v-col cols="4">
-                                                      <v-btn
-                                                        elevation="1"
-                                                        @click="
-                                                          updateProvider(
-                                                            pro._id
-                                                          )
-                                                        "
-                                                        >Update Provider</v-btn
-                                                      >
-                                                    </v-col>
-                                                  </v-row>
-                                                </v-col>
-                                              </v-row>
-                                            </div>
-                                          </v-container>
-                                        </v-card-text>
-                                      </v-card>
-                                    </v-dialog>
-                                  </v-col>
-
-                                  <v-col
-                                    cols="2"
-                                    class="d-flex justify-center align-center"
-                                  >
-                                    <v-icon
-                                      @click="deleteProvider(pro._id)"
-                                      dense
-                                      color="black"
-                                      >mdi-delete</v-icon
-                                    >
-                                  </v-col>
-                                </v-row>
-                              </div>
-                            </v-col>
-                            <v-col cols="4"></v-col>
-                          </v-row>
-                        </v-col>
-                      </v-row>
-                    </div>
-                  </v-container>
-                </v-card-text>
-
-                <v-divider></v-divider>
-
-                <v-card-actions>
-                  <v-btn
-                    color="red"
-                    dark
-                    elevation="1"
-                    @click="deleteClient(editedClient.id)"
-                  >
-                    Delete client
-                  </v-btn>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    @click="closeClientEditDialog"
-                    elevation="1"
-                    class="mr-4"
-                  >
-                    Cancel
-                  </v-btn>
-                  <v-btn elevation="1" @click="updateClient(editedClient.id)">
-                    Update client
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
+              <EditClientForm
+                :providers="providers"
+                :editedClient="editedClient"
+                v-bind.sync="editedClient"
+                @addProvider="addProvider"
+                @pushProvider="pushProvider"
+                @removeProvider="removeProvider"
+                @deleteClient="deleteClient"
+                @deleteProvider="deleteProvider"
+                @updateProvider="updateProvider"
+                @closeClientEditDialog="closeClientEditDialog"
+              />
             </v-dialog>
             <v-dialog
               v-model="deleteClientDialog"
@@ -343,14 +132,15 @@
 
 <script>
 import api from "../utils/api";
-import {required, email, numeric} from "vuelidate/lib/validators";
 import NewClientForm from "./NewClientForm.vue";
+import EditClientForm from "./EditClientForm.vue";
 
 export default {
   name: "ClientList",
   props: ["clients", "providers"],
   components: {
     NewClientForm,
+    EditClientForm,
   },
   data() {
     return {
@@ -390,21 +180,6 @@ export default {
       },
     };
   },
-  validations: {
-    editedClient: {
-      name: {
-        required,
-      },
-      email: {
-        required,
-        email,
-      },
-      phone: {
-        required,
-        numeric,
-      },
-    },
-  },
   methods: {
     setClientToDelete(id) {
       this.clientToDelete = id;
@@ -413,23 +188,12 @@ export default {
       this.newClientDialog = false;
     },
     closeClientEditDialog() {
-      this.editedClient = {
-        id: "",
-        name: "",
-        email: "",
-        phone: "",
-        providers: [],
-      };
       this.editClientDialog = false;
     },
     closeClientDeleteDialog() {
       this.clientToDelete = "";
       this.deleteClientDialog = false;
     },
-    // closeProviderEditDialog() {
-    //   this.editedProvider.name = "";
-    //   this.editProviderDialog = false;
-    // },
     addCheckboxChange(val, pro, newClient) {
       if (val) {
         const exists = newClient.providers.find((el) => el === pro._id);
@@ -440,18 +204,6 @@ export default {
       } else {
         const idx = newClient.providers.indexOf(pro._id);
         newClient.providers.splice(idx, 1);
-      }
-    },
-    editCheckboxChange(val, pro) {
-      if (val) {
-        const exists = this.editedClient.providers.find((el) => el === pro._id);
-
-        if (!exists) {
-          this.editedClient.providers.push(pro._id);
-        }
-      } else {
-        const idx = this.editedClient.providers.indexOf(pro._id);
-        this.editedClient.providers.splice(idx, 1);
       }
     },
     listProviders(pros) {
@@ -472,15 +224,12 @@ export default {
         providers: [...item.providers],
       };
     },
-    editProvider(pro) {
-      this.editedProvider = {
-        name: pro.name,
-      };
+    pushProvider(providerId) {
+      this.editedClient.providers.push(providerId);
     },
-    checkRelation(currentProvider) {
-      return this.editedClient.providers.some(function (el) {
-        return el === currentProvider._id;
-      });
+    removeProvider(providerId) {
+      const idx = this.editedClient.providers.indexOf(providerId);
+      this.editedClient.providers.splice(idx, 1);
     },
     async addProvider(newProvider) {
       try {
@@ -499,12 +248,13 @@ export default {
       try {
         this.loading = true;
         await api.delete(`/providers/${id}`);
-        // if (this.editedClient.providers.length) {
-        //   const idx = this.editedClient.providers.indexOf(id);
-        //   this.editedClient.providers.splice(idx, 1);
-        // }
-        this.$emit("refresh");
 
+        if (this.editedClient.providers.length) {
+          const idx = this.editedClient.providers.indexOf(id);
+          this.editedClient.providers.splice(idx, 1);
+        }
+
+        this.$emit("refresh");
         this.$toastr.s("Successfully deleted provider", "Success");
       } catch (error) {
         // console.log("error deleting provider ", error);
