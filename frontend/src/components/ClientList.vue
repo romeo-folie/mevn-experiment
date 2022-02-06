@@ -66,6 +66,7 @@
                 @addProvider="addProvider"
                 @pushProvider="pushProvider"
                 @removeProvider="removeProvider"
+                @updateClient="updateClient"
                 @deleteClient="deleteClient"
                 @deleteProvider="deleteProvider"
                 @updateProvider="updateProvider"
@@ -310,6 +311,7 @@ export default {
         await api.put(`/clients/${id}`, this.editedClient);
         this.$emit("refresh");
         this.closeClientEditDialog();
+        this.$toastr.s("Updated client", "Success");
       } catch (error) {
         // console.log("error updating client ", error);
         this.$toastr.e("Failed to update client", "Error");

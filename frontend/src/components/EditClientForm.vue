@@ -214,12 +214,6 @@
 </template>
 
 <script>
-// If I bring the editedClient in as a prop
-// that means I can't perform validation on it cos there's no v-model to tie it to
-// I might be able to still manage to do validation on it using the .sync approach
-// That approach won't work cos we bind the value
-// I think I'm gonna have to sacrifice validation or the edit form
-// Vuelidate can't handle this very well due to the way it's setup
 export default {
   name: "EditClientForm",
   props: {
